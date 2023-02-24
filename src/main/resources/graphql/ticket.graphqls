@@ -1,0 +1,19 @@
+type Ticket {
+    id: ID!
+    ticket_date: String
+    email: String
+    event_id:String
+    changed: Boolean
+    event: Event
+}
+
+input InputTicket {
+    ticket_date: String
+    email: String
+    event_id: Int
+}
+
+extend type Mutation {
+    createTicket(input : InputTicket) : Ticket
+    changeTicket(id:ID!,email:String ) : Ticket
+}

@@ -1,0 +1,46 @@
+type Event {
+    id: ID!
+    name: String!
+    type: String
+    amount:Int
+    start_term: String
+    end_term: String
+    event_date:String
+    tickets_number: Int
+    changed_tickets: Int
+    sold_tickets: Int
+    address:String
+}
+input InputEvent {
+    name: String
+    type: String
+    amount:Int
+    start_term: String
+    end_term: String
+    event_date:String
+    tickets_number: Int
+    address:String
+}
+
+input updateEventInput {
+    id: ID!
+    name: String
+    type: String
+    amount:Int
+    start_term: String
+    end_term: String
+    event_date:String
+    tickets_number: Int
+    changed_tickets: Int
+    sold_tickets: Int
+    address:String
+}
+type Query {
+    getEvents: [Event]
+    getEvent(id:ID):Event
+}
+type Mutation {
+    createEvent(input:InputEvent): Event
+    deleteEvent(id:ID): Event
+    updateEvent(input:updateEventInput): Event
+}
