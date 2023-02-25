@@ -18,7 +18,11 @@ public class EventServiceImp implements EventService {
     @Override
     public Event getById(long id) {
         Optional<Event> event = eventRepository.findById(id);
-        return event.orElse(null);
+        if (event.isPresent()) {
+            return event.get();
+        }else{
+            throw  new NotFound("We were unable to find a event with the provided id");
+        }
     }
 
     @Override
@@ -33,6 +37,10 @@ public class EventServiceImp implements EventService {
 
     @Override
     public Event update(Event event) {
+        Optional<Event> updateEvent = eventRepository.findById(event.getId());
+        if (updateEvent.isEmpty()) {
+            throw  new NotFound("No existe el evento indicado");
+        }
         return eventRepository.save(event);
     }
 

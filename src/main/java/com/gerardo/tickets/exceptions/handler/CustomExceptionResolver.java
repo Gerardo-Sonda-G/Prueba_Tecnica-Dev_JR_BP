@@ -1,5 +1,6 @@
 package com.gerardo.tickets.exceptions.handler;
 
+import com.gerardo.tickets.exceptions.BadRequest;
 import com.gerardo.tickets.exceptions.NotFound;
 import graphql.GraphQLError;
 import graphql.GraphqlErrorBuilder;
@@ -17,6 +18,13 @@ public class CustomExceptionResolver extends DataFetcherExceptionResolverAdapter
         if (ex instanceof NotFound) {
             return GraphqlErrorBuilder.newError()
                     .errorType(ErrorType.NOT_FOUND)
+                    .message(ex.getMessage())
+                    .path(env.getExecutionStepInfo().getPath())
+                    .location(env.getField().getSourceLocation())
+                    .build();
+        } else if(ex instanceof BadRequest) {
+            return GraphqlErrorBuilder.newError()
+                    .errorType(ErrorType.BAD_REQUEST)
                     .message(ex.getMessage())
                     .path(env.getExecutionStepInfo().getPath())
                     .location(env.getField().getSourceLocation())
