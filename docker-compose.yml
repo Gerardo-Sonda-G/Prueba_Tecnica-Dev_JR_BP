@@ -1,0 +1,28 @@
+version: "3.7"
+
+services:
+  tickets-api:
+    image: openjdk:18
+    container_name: tickets-api
+    volumes:
+      - ./target/tickets-0.0.1-SNAPSHOT.jar:/tickets.jar
+    command: ["java","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5252","-Dspring.profiles.active=local","-jar","tickets.jar"]
+    ports:
+      - "8080:8080"
+    depends_on:
+      - tickets-mysql
+
+  tickets-mysql:
+    image: mysql:8.0
+    container_name: tickets-mysql
+    volumes:
+      - ./docker/DEV:/docker-entrypoint-initdb.d
+    ports:
+      - "3316:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=1234567
+      - LANG=C.UTF-8
+    healthcheck:
+      test: ["CMD", "mysql", "-h", "localhost", "-u", "root", "-proot", "information_schema", "-e", "SELECT 1"]
+      timeout: 3s
+      retries: 10
