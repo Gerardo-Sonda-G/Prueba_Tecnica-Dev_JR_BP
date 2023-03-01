@@ -81,6 +81,19 @@ Querys de los eventos
     getEvents: [Event]
     getEvent(id:ID):Event
 
+Posterior al proceso de implementar la funcionalidad y corregir bugs, inicie el proceso de investigar
+la implementación de docker para mejorar la funcionalidad y facilitar la ejecución del proyecto.
+
+Se definieron dos contenedores:
+
+- tickets-api con una imagen de openjdk:18
+- tickets-mysql con una imagen de mysql:8.0
+
+El contenedor tickets-mysql creara un volumen para persistir la información.
+
+Se creo un archivo docker-compose.yml con las directivas para crear los contenedores necesarios, adicionalmente se añadió un
+archivo para generar el esquema de la base de datos con sus tablas y unos datos de ejemplo
+
 Considerar que el proyecto esta hecho con el jdk 18 al momento realizar los pasos para generar el archivo .jar
 
 Para ejecutar el proyecto seguir los siguiente pasos:
@@ -96,6 +109,7 @@ Ejecutar el comando para crear e iniciar el contenedor.
 
 - `docker-compose up -d`
 
+
 El endpoint esta localizado en : [localhost/graphql](http://localhost:8080/graphql)
 
 Pagina web visible en : [localhost](http://localhost:8080/)
@@ -105,3 +119,5 @@ Para detener el contenedor ejecutar
 
 Para iniciar el contenedor ejecutar
 `docker-compose start`
+
+Repositorio del font-end hecho en react: [Ir al repositorio](https://github.com/Gerardo-Sonda-G/PruebaTecnica-AD/tree/master)
