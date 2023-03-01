@@ -10,6 +10,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 @Service
@@ -35,7 +38,22 @@ public class TicketServiceImp implements TicketService {
             throw new NotFound("No existe el evento indicado");
         }
         Event event = optionalEvent.get();
-        System.out.println(event.getId());
+
+        LocalDateTime localDateTimeEnd = LocalDateTime.parse(event.getEnd_date(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        long endMillis = localDateTimeEnd
+                .atZone(ZoneId.systemDefault())
+                .toInstant().toEpochMilli();
+        LocalDateTime localDateTimeStart = LocalDateTime.parse(event.getStart_date(),
+                DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        long startMillis = localDateTimeStart
+                .atZone(ZoneId.systemDefault())
+                .toInstant().toEpochMilli();
+
+        if (endMillis < System.currentTimeMillis() || startMillis > System.currentTimeMillis()){
+            throw new BadRequest("El boleto solo se puede cambiar en el periodo de inicio y fin del evento");
+        }
+
         ticketRepository.changeTicket(id, email);
         event.setChanged_tickets(ticketRepository.getTicketsChanged(ticket.getEvent_id()));
         eventRepository.save(event);
