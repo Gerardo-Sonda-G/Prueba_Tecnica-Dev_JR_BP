@@ -3,9 +3,8 @@ type Event {
     name: String!
     type: String
     amount:Int
-    start_term: String
-    end_term: String
-    event_date:String
+    start_date: String
+    end_date: String
     tickets_number: Int
     changed_tickets: Int
     sold_tickets: Int
@@ -15,8 +14,8 @@ input InputEvent {
     name: String
     type: String
     amount:Int
-    start_term: String
-    end_term: String
+    start_date: String
+    end_date: String
     event_date:String
     tickets_number: Int
     address:String
@@ -27,9 +26,8 @@ input updateEventInput {
     name: String
     type: String
     amount:Int
-    start_term: String
-    end_term: String
-    event_date:String
+    start_date: String
+    end_date: String
     tickets_number: Int
     changed_tickets: Int
     sold_tickets: Int

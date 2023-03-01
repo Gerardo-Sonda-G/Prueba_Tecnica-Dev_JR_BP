@@ -9,6 +9,7 @@ import com.gerardo.tickets.repository.TicketRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.Optional;
 
 @Service
@@ -16,13 +17,16 @@ import java.util.Optional;
 public class TicketServiceImp implements TicketService {
     private final TicketRepository ticketRepository;
     private final EventRepository eventRepository;
+
     @Override
-    public Ticket changeTicket(long event_id, String email) {
-        Optional<Ticket> optionalTicket = ticketRepository.findById(event_id);
+    public Ticket changeTicket(long id, String email) {
+        //check if exist the tickets in other case return error
+        Optional<Ticket> optionalTicket = ticketRepository.findById(id);
         if (optionalTicket.isEmpty()) {
             throw new NotFound("No existe el ticket a indicado");
         }
         Ticket ticket = optionalTicket.get();
+        //check if the ticket has been changed before if is true return error in other case update the ticket
         if(ticket.isChanged()){
             throw new BadRequest("El ticket ya ha sido cambiado anteriormente");
         }
@@ -30,16 +34,29 @@ public class TicketServiceImp implements TicketService {
         if (optionalEvent.isEmpty()) {
             throw new NotFound("No existe el evento indicado");
         }
-
+        Event event = optionalEvent.get();
+        System.out.println(event.getId());
+        ticketRepository.changeTicket(id, email);
+        event.setChanged_tickets(ticketRepository.getTicketsChanged(ticket.getEvent_id()));
+        eventRepository.save(event);
         return optionalTicket.orElse(null);
     }
 
     @Override
     public Ticket create(Ticket ticket) {
+        //check if exist the event in other case return error
         Optional<Event> optionalEvent = eventRepository.findById(ticket.getEvent_id());
         if (optionalEvent.isEmpty()) {
             throw new NotFound("No existe el evento indicado");
         }
-        return ticketRepository.save(ticket);
+        long dateMillis = Long.parseLong(ticket.getTicket_date());
+        Timestamp startTimestamp = new Timestamp(dateMillis);
+
+        ticket.setTicket_date(startTimestamp.toString());
+        Ticket newTicket = ticketRepository.save(ticket);
+        Event event = optionalEvent.get();
+        event.setSold_tickets(ticketRepository.getTicketsSold(event.getId()));
+        eventRepository.save(event);
+        return newTicket;
     }
 }

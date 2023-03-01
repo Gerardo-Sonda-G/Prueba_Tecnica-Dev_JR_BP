@@ -11,11 +11,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CustomExceptionResolver extends DataFetcherExceptionResolverAdapter {
-    //Manejador de errores perosnalizados en la peticiones de graphQL
     @Override
     protected GraphQLError resolveToSingleError(Throwable ex, DataFetchingEnvironment env) {
-        //Se capturan los errores para desplegarlos en la respuesta de GraphQl error in formacion no encontrdda
+        //Se capturan los errores para desplegarlos en la respuesta de GraphQl
         if (ex instanceof NotFound) {
+            //error informacion no encontrada
             return GraphqlErrorBuilder.newError()
                     .errorType(ErrorType.NOT_FOUND)
                     .message(ex.getMessage())
@@ -23,6 +23,7 @@ public class CustomExceptionResolver extends DataFetcherExceptionResolverAdapter
                     .location(env.getField().getSourceLocation())
                     .build();
         } else if(ex instanceof BadRequest) {
+            //error peticion incorrecta o informacion incorrecta
             return GraphqlErrorBuilder.newError()
                     .errorType(ErrorType.BAD_REQUEST)
                     .message(ex.getMessage())
