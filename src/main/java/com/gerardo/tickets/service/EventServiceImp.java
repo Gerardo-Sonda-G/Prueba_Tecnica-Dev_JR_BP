@@ -89,6 +89,8 @@ public class EventServiceImp implements EventService {
         Timestamp startTimestamp = new Timestamp(startMillis);
         Timestamp endTimestamp = new Timestamp(endMillis);
         //update dates in event object
+        event.setSold_tickets(updateEvent.getSold_tickets());
+        event.setChanged_tickets(updateEvent.getChanged_tickets());
         event.setStart_date(startTimestamp.toString());
         event.setEnd_date(endTimestamp.toString());
         return eventRepository.save(event);
@@ -108,12 +110,12 @@ public class EventServiceImp implements EventService {
                 .atZone(ZoneId.systemDefault())
                 .toInstant().toEpochMilli();
         //in this section verify data consistency and sold tickets
-        if (event.getSold_tickets() == 0) {
+        if (endMillis < System.currentTimeMillis()) {
             eventRepository.deleteById(id);
-        } else if (endMillis > System.currentTimeMillis()) {
-            throw new BadRequest("No se puede borrar el evento si la fecha de fin no es mayor a la fecha actual");
+        } else if ( event.getSold_tickets() == 0) {
+            eventRepository.deleteById(id);
         } else {
-            eventRepository.deleteById(id);
+            throw new BadRequest("Solo se puede eliminar el evento si la fecha de fin ya paso o si no hay boletos vendidos");
         }
         return removedEvent.orElse(null);
     }
